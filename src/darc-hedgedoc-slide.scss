@@ -1,0 +1,226 @@
+/**
+ * DARC — HedgeDoc slide-mode bundle
+ *
+ * Drop-in replacement for HedgeDoc's stock /css/slide.css. Imports our
+ * reveal.js DARC theme (mounted alongside, at /css/darc.css) and layers
+ * the load-bearing HedgeDoc-specific rules on top.
+ *
+ * Bind-mount BOTH files into HedgeDoc:
+ *
+ *   volumes:
+ *     - ./darc.css:/hedgedoc/public/css/darc.css:ro
+ *     - ./darc-hedgedoc-slide.css:/hedgedoc/public/css/slide.css:ro
+ *
+ * The relative `@import url("darc.css")` resolves to /css/darc.css on
+ * the HedgeDoc origin — already in the `style-src` CSP allowlist.
+ *
+ * Compiled via sass CLI directly (not vite) so the @import is preserved
+ * in the output instead of being inlined at build time.
+ */
+
+@import url("darc.css");
+
+// ─── DARC palette tokens used below ────────────────────────────────
+$oa-gray-500:   #949494;
+$oa-orange-500: #ff5f33;
+
+// ─── HedgeDoc slide-page layout ────────────────────────────────────
+html, body {
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+}
+.container {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	overflow-y: scroll;
+}
+.container.hidescrollbar { right: -17px; }
+.reveal { height: 100vh; }
+.reveal .progress,
+.reveal .slide-number,
+.reveal .playback,
+.reveal .controls { position: absolute; }
+
+// FOUC prevention — HedgeDoc-side JS flips this back on after init
+.slides, #meta { display: none; }
+
+@media only screen {
+	.reveal .slides,
+	.reveal .backgrounds,
+	.reveal.overview { transform-style: preserve-3d; }
+}
+
+.reveal .slides > section,
+.reveal .slides > section > section { transform-style: flat; }
+
+.reveal.fade {
+	opacity: unset;
+	transition: unset;
+}
+
+// RTL support
+.reveal.rtl .slides,
+.reveal.rtl .slides h1,
+.reveal.rtl .slides h2,
+.reveal.rtl .slides h3,
+.reveal.rtl .slides h4,
+.reveal.rtl .slides h5,
+.reveal.rtl .slides h6 {
+	direction: rtl;
+	font-family: inherit;
+}
+
+// Print / PDF export
+.print-pdf .container {
+	position: relative;
+	overflow-y: hidden;
+}
+.print-pdf .container.hidescrollbar { right: 0; }
+.print-pdf .footer { display: none; }
+
+// ─── Media embeds ──────────────────────────────────────────────────
+.vimeo,
+.youtube {
+	position: relative !important;
+	cursor: pointer;
+	display: table;
+	width: 100% !important;
+	text-align: center;
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-color: black;
+	overflow: hidden;
+	font-size: 24px !important;
+	padding-bottom: 56.25% !important;
+}
+.vimeo > img,
+.youtube > img {
+	max-width: 100%;
+	max-height: 100%;
+	margin: 0 !important;
+	border: 0 !important;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 0;
+}
+.vimeo > iframe,
+.youtube > iframe {
+	max-width: 100%;
+	max-height: 100%;
+}
+.slideshare .inner,
+.speakerdeck .inner { padding-bottom: 62% !important; }
+.pdfobject { height: 85vh !important; }
+
+// ─── Task lists ────────────────────────────────────────────────────
+.task-list-item-checkbox {
+	font-size: inherit;
+	height: 1em;
+	transform: scale(2);
+	margin: 0.15em 0 0.15em -0.84em !important;
+}
+
+// ─── Code line numbers ─────────────────────────────────────────────
+pre code .wrapper { display: inline-flex; }
+pre code .gutter {
+	float: left;
+	overflow: hidden;
+	user-select: none;
+}
+pre code .gutter.linenumber {
+	text-align: right;
+	position: relative;
+	display: inline-block;
+	cursor: default;
+	z-index: 4;
+	padding: 0 8px 0 0;
+	min-width: 20px;
+	box-sizing: content-box;
+	color: $oa-gray-500 !important;
+	border-right: 3px solid $oa-orange-500 !important;
+}
+pre code .gutter.linenumber > span:before { content: attr(data-linenumber); }
+pre code .code {
+	float: left;
+	margin: 0 0 0 16px;
+}
+
+// ─── Gist embeds ───────────────────────────────────────────────────
+.gist .line-numbers { border: none; }
+.gist .line-data { border: none; }
+.gist table {
+	border-spacing: 0;
+	border-collapse: inherit !important;
+}
+code[data-gist-id] {
+	background: none;
+	padding: 0;
+}
+code[data-gist-id]:before,
+code[data-gist-id]:after { content: ''; }
+
+// ─── Diagram blocks ────────────────────────────────────────────────
+pre.flow-chart,
+pre.sequence-diagram,
+pre.graphviz,
+pre.mermaid,
+pre.abc {
+	text-align: center;
+	background-color: white;
+	border-radius: 0;
+	white-space: inherit;
+}
+pre.flow-chart > code,
+pre.sequence-diagram > code,
+pre.graphviz > code,
+pre.mermaid > code,
+pre.abc > code { text-align: left; }
+pre.flow-chart > svg,
+pre.sequence-diagram > svg,
+pre.graphviz > svg,
+pre.mermaid > svg,
+pre.abc > svg {
+	max-width: 100%;
+	height: 100%;
+}
+
+// ─── Emoji glyphs ──────────────────────────────────────────────────
+.emoji {
+	margin: 0 !important;
+	background: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
+	margin-bottom: -0.25em !important;
+}
+
+.text-uppercase { text-transform: uppercase; }
+
+// ─── Footer ────────────────────────────────────────────────────────
+.footer {
+	background-color: white;
+	padding: 25px 15px;
+
+	.gray-font { color: $oa-gray-500; }
+
+	> * {
+		margin-left: auto;
+		margin-right: auto;
+		max-width: 758px;
+	}
+
+	.ui-no-lastchangeuser { width: 18px; }
+
+	.slides-disqus {
+		margin-top: 25px;
+		margin-bottom: 15px;
+	}
+}

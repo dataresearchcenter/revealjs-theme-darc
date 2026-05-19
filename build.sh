@@ -20,7 +20,7 @@ if [ ! -d reveal.js ]; then
 	git clone --depth 1 --branch "${REVEAL_TAG}" "${REVEAL_REPO}" reveal.js
 fi
 
-# Stage our SCSS into reveal.js/css/theme/ (idempotent — copy source-of-truth)
+# Stage reveal-themed SCSS into reveal.js/css/theme/ for vite to compile
 cp src/darc.scss          reveal.js/css/theme/darc.scss
 cp src/darc-light.scss    reveal.js/css/theme/darc-light.scss
 cp src/darc-hedgedoc.scss reveal.js/css/theme/darc-hedgedoc.scss
@@ -33,11 +33,18 @@ fi
 # Compile via reveal.js's vite styles config
 (cd reveal.js && npm run build:styles)
 
-# Copy compiled CSS to top-level dist/
+# Copy vite-compiled CSS to top-level dist/
 mkdir -p dist
 cp reveal.js/dist/theme/darc.css          dist/darc.css
 cp reveal.js/dist/theme/darc-light.css    dist/darc-light.css
 cp reveal.js/dist/theme/darc-hedgedoc.css dist/darc-hedgedoc.css
+
+# Compile darc-hedgedoc-slide.scss with sass CLI directly — vite's
+# postcss-import would try to inline the `@import url("darc.css")` at
+# build time, but we need that import preserved so the browser fetches
+# /css/darc.css alongside slide.css at runtime.
+reveal.js/node_modules/.bin/sass --no-source-map --style=compressed \
+  src/darc-hedgedoc-slide.scss dist/darc-hedgedoc-slide.css
 
 echo
 echo "Built:"

@@ -1,4 +1,5 @@
 # Upstream reveal.js — cloned at build time, never committed
+.playwright-mcp
 /reveal.js/
 
 # Node deps

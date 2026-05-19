@@ -2,40 +2,66 @@
 
 DARC theme for **HedgeDoc** and **reveal.js** — orange ember accent on slate, Inter for body, Sligoil Micro for display + code. Adapted from the [DARC zensical / mkdocs-material theme](https://dataresearchcenter.github.io/zensical-theme-darc/).
 
-Three stylesheets ship side-by-side:
+Four stylesheets ship side-by-side:
 
 | File | Target | Use for |
 |---|---|---|
-| `dist/darc.css` | reveal.js — slate (dark) | default deck theme |
+| `dist/darc.css` | reveal.js — slate (dark) | vanilla reveal.js deck theme |
 | `dist/darc-light.css` | reveal.js — paper (light) | light-room presentations / handouts |
-| `dist/darc-hedgedoc.css` | HedgeDoc app UI | retint editor, preview, cover, nav |
+| `dist/darc-hedgedoc-slide.css` | HedgeDoc — `/css/slide.css` | bind-mount target; imports `darc.css` + adds HedgeDoc's slide-page chrome |
+| `dist/darc-hedgedoc.css` | HedgeDoc — app UI palette overlay | retint editor, preview, cover, nav — loaded via reverse-proxy injection |
 
-All three are published at `https://dataresearchcenter.github.io/revealjs-theme-darc/dist/` on every push to `main`.
+All four are published at `https://dataresearchcenter.github.io/revealjs-theme-darc/dist/` on every push to `main`.
 
 ## Use with HedgeDoc
 
-For a self-hosted HedgeDoc deployment, bind-mount the relevant DARC stylesheet over HedgeDoc's stock CSS file. Both paths live under `/css/` which is already in HedgeDoc's `style-src` CSP allowlist.
+### Slide mode — bind-mount
 
-### docker-compose.yml
+HedgeDoc loads `/css/slide.css` last on every slide-mode page, so bind-mounting our slide bundle there overrides the stock reveal.js theme. The slide bundle imports `darc.css`, so mount both files next to each other under `/css/`:
 
 ```yaml
 services:
   hedgedoc:
     volumes:
-      # slide mode — replaces reveal.js theme
-      - ./darc.css:/hedgedoc/public/css/slide.css:ro
-      # app UI — replaces the tiny site-wide stylesheet (font, focus, scroll)
-      - ./darc-hedgedoc.css:/hedgedoc/public/css/site.css:ro
+      - ./darc.css:/hedgedoc/public/css/darc.css:ro
+      - ./darc-hedgedoc-slide.css:/hedgedoc/public/css/slide.css:ro
 ```
-
-Drop your local copies next to the compose file and restart. Pull fresh copies from the published Pages build with:
 
 ```sh
-curl -o darc.css          https://dataresearchcenter.github.io/revealjs-theme-darc/dist/darc.css
-curl -o darc-hedgedoc.css https://dataresearchcenter.github.io/revealjs-theme-darc/dist/darc-hedgedoc.css
+curl -o darc.css                https://dataresearchcenter.github.io/revealjs-theme-darc/dist/darc.css
+curl -o darc-hedgedoc-slide.css https://dataresearchcenter.github.io/revealjs-theme-darc/dist/darc-hedgedoc-slide.css
 ```
 
-Swap `darc.css` for `darc-light.css` if you want the paper slide variant.
+Both paths are in HedgeDoc's `style-src` CSP allowlist. Swap in `darc-light.css` if you prefer the paper variant for slides.
+
+### App UI (cover, editor, preview) — reverse-proxy injection
+
+HedgeDoc only loads `/build/...HASH.css` (webpack output) on non-slide pages — it does **not** load `/css/site.css`, so a bind-mount there doesn't fire. The realistic path is injecting a `<link>` into every response at the reverse proxy.
+
+**Caddy** (needs the `replace-response` module):
+
+```caddyfile
+pad.investigativedata.org {
+    reverse_proxy hedgedoc:3000
+
+    replace {
+        "</head>"  "<link rel=\"stylesheet\" href=\"https://dataresearchcenter.github.io/revealjs-theme-darc/dist/darc-hedgedoc.css\"></head>"
+    }
+}
+```
+
+**nginx** (`ngx_http_sub_module` is built-in on most distros):
+
+```nginx
+location / {
+    proxy_pass http://hedgedoc:3000;
+    sub_filter '</head>' '<link rel="stylesheet" href="https://dataresearchcenter.github.io/revealjs-theme-darc/dist/darc-hedgedoc.css"></head>';
+    sub_filter_once on;
+    proxy_set_header Accept-Encoding "";  # disable upstream gzip so sub_filter can see the body
+}
+```
+
+Either approach makes `darc-hedgedoc.css` the last stylesheet on every page, so the DARC palette + fonts override HedgeDoc's webpack bundles via the CSS cascade. No HedgeDoc image patching needed — survives upgrades.
 
 ### CSP whitelist
 
@@ -132,23 +158,25 @@ For DARC-style eyebrow labels above a heading (slide mode):
 The script will:
 1. Clone reveal.js at the pinned tag (`6.0.1`) into `reveal.js/` if not present.
 2. Copy `src/darc.scss`, `src/darc-light.scss`, and `src/darc-hedgedoc.scss` into `reveal.js/css/theme/`.
-3. Run `npm run build:styles` inside the reveal.js checkout.
-4. Stage compiled CSS into top-level `dist/`.
+3. Run `npm run build:styles` (vite) inside the reveal.js checkout for those three.
+4. Compile `src/darc-hedgedoc-slide.scss` via the sass CLI directly — vite's postcss-import would inline the `@import url("darc.css")` at build time, but we want the import preserved so the browser fetches `/css/darc.css` alongside slide.css at runtime.
+5. Stage all four compiled CSS files into top-level `dist/`.
 
 To bump reveal.js: `REVEAL_TAG=6.x.y ./build.sh` (or edit the default in `build.sh`).
 
 ## Repo layout
 
 ```
-src/                    DARC theme SCSS — source of truth
-  darc.scss             reveal.js — slate (dark) variant
-  darc-light.scss       reveal.js — paper (light) variant
-  darc-hedgedoc.scss    HedgeDoc — app UI palette overlay
-dist/                   compiled CSS, served via GitHub Pages
-index.html              demo deck (also published)
-build.sh                build script (clones reveal.js, runs vite)
-.github/workflows/      Pages deploy
-reveal.js/              gitignored — cloned at build time
+src/                        DARC theme SCSS — source of truth
+  darc.scss                 reveal.js — slate (dark) variant
+  darc-light.scss           reveal.js — paper (light) variant
+  darc-hedgedoc.scss        HedgeDoc — app UI palette overlay (reverse-proxy inject)
+  darc-hedgedoc-slide.scss  HedgeDoc — /css/slide.css bind-mount (imports darc.css)
+dist/                       compiled CSS, served via GitHub Pages
+index.html                  demo deck (also published)
+build.sh                    build script (vite + sass)
+.github/workflows/          Pages deploy
+reveal.js/                  gitignored — cloned at build time
 ```
 
 ## Acknowledgements
