@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>DARC — reveal.js theme demo</title>
+
+<!-- reveal.js core (CDN, pinned) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@6.0.1/dist/reset.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@6.0.1/dist/reveal.css" />
+
+<!-- DARC dark theme — swap to dist/darc-light.css for the light variant -->
+<link rel="stylesheet" href="dist/darc.css" />
+</head>
+<body>
+<div class="reveal">
+	<div class="slides">
+
+		<section>
+			<p class="eyebrow">data research center</p>
+			<h1>DARC theme</h1>
+			<p>A reveal.js port of the <a href="https://dataresearchcenter.github.io/zensical-theme-darc/">DARC zensical theme</a> — Inter + Sligoil Micro, ember on slate.</p>
+		</section>
+
+		<section>
+			<h2>Headings &amp; body copy</h2>
+			<p>Body text rides on <code>Inter</code> at 36px. Headings drop to <code>Sligoil Micro</code>, the same display face used on the DARC docs site.</p>
+			<h3>Section heading (h3)</h3>
+			<p>Paragraphs pick up <strong>strong text</strong>, <em>italics</em>, and <a href="#">inline links</a> in the orange ember accent. Selection mirrors the brand color.</p>
+		</section>
+
+		<section>
+			<h2>Lists</h2>
+			<ul>
+				<li>Bullets land in the accent color via <code>::marker</code></li>
+				<li>Nested lists stay legible</li>
+				<li>
+					Sub-points:
+					<ul>
+						<li>square nesting</li>
+						<li>then circles further down</li>
+					</ul>
+				</li>
+			</ul>
+			<ol>
+				<li>Ordered lists</li>
+				<li>also keep accent markers</li>
+			</ol>
+		</section>
+
+		<section>
+			<h2>Code</h2>
+			<p>Inline like <code>const slide = darc()</code> renders on a panel chip.</p>
+			<pre><code>// Block code uses the DARC panel chrome
+async function loadDeck(url) {
+  const res = await fetch(url);
+  return await res.json();
+}</code></pre>
+		</section>
+
+		<section>
+			<h2>Blockquote</h2>
+			<blockquote>
+				A short pull-quote rendered with an ember left rule instead of the
+				default italic shadow box. Legible at slide distance, on-brand at any.
+			</blockquote>
+		</section>
+
+		<section>
+			<h2>Table</h2>
+			<table>
+				<thead>
+					<tr><th>Dataset</th><th>Rows</th><th>Updated</th></tr>
+				</thead>
+				<tbody>
+					<tr><td>OpenAleph</td><td>2.1M</td><td>2026-05-10</td></tr>
+					<tr><td>Sanctions</td><td>184K</td><td>2026-05-17</td></tr>
+					<tr><td>Companies</td><td>43.6M</td><td>2026-05-19</td></tr>
+				</tbody>
+			</table>
+		</section>
+
+		<section>
+			<h2>Admonitions</h2>
+			<aside class="admonition note">
+				<span class="admonition-title">Note</span>
+				<p>Mirror of the DARC mkdocs callout — info purple, warning yellow, danger orange, success green.</p>
+			</aside>
+			<aside class="admonition warning">
+				<span class="admonition-title">Warning</span>
+				<p>Heads up — this dataset stops updating after 2026-06-01.</p>
+			</aside>
+			<aside class="admonition danger">
+				<span class="admonition-title">Danger</span>
+				<p>Do not run this query on the live cluster.</p>
+			</aside>
+			<aside class="admonition tip">
+				<span class="admonition-title">Tip</span>
+				<p>Use <code>--dry-run</code> first.</p>
+			</aside>
+		</section>
+
+		<section data-background-color="#fff8f1">
+			<h2>Light-background slide</h2>
+			<p>Slides flagged <code>data-background-color="#fff8f1"</code> auto-flip text to ink and code chips to gray-100, so a mixed deck stays legible.</p>
+			<aside class="admonition info">
+				<span class="admonition-title">Info</span>
+				<p>Admonitions keep their panel chrome but read against the paper background.</p>
+			</aside>
+		</section>
+
+		<section>
+			<p class="eyebrow">end</p>
+			<h1>thanks.</h1>
+			<p><a href="https://dataresearchcenter.org/">dataresearchcenter.org</a></p>
+		</section>
+
+	</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@6.0.1/dist/reveal.js"></script>
+<script>
+	Reveal.initialize({
+		hash: true,
+		controls: true,
+		progress: true,
+		center: true,
+		transition: 'fade',
+	});
+</script>
+</body>
+</html>

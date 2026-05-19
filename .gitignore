@@ -1,0 +1,17 @@
+# Upstream reveal.js — cloned at build time, never committed
+/reveal.js/
+
+# Node deps
+node_modules/
+
+# Build artifacts — CI rebuilds these, served via GitHub Pages
+/dist/
+.cache/
+.parcel-cache/
+.DS_Store
+
+# OS / editor
+*.swp
+*.tmp
+.idea/
+.vscode/

@@ -1,0 +1,333 @@
+/**
+ * DARC — Light theme for reveal.js
+ *
+ * Adapted from the DARC zensical / mkdocs-material theme:
+ * https://dataresearchcenter.github.io/zensical-theme-darc/
+ *
+ * Default (light) variant: orange ember accent on paper,
+ * Inter (body) + Sligoil Micro (display + code).
+ */
+
+@use 'sass:color';
+@use 'template/mixins' as mixins;
+
+// ─── DARC palette ──────────────────────────────────────────────────
+$oa-black:  #1a1a1a;
+$oa-white:  #ffffff;
+$oa-paper:  #fff8f1;
+
+$oa-gray-50:  #f9f9f9;
+$oa-gray-100: #f2f2f2;
+$oa-gray-200: #e8e8e8;
+$oa-gray-300: #d8d8d8;
+$oa-gray-400: #b4b4b4;
+$oa-gray-500: #949494;
+$oa-gray-600: #6c6c6c;
+$oa-gray-700: #595959;
+$oa-gray-800: #3a3a3a;
+$oa-gray-900: #1a1a1a;
+
+$oa-orange-300: #fe8f6f;
+$oa-orange-400: #fe764f;
+$oa-orange-500: #ff5f33;
+$oa-orange-600: #f4592f;
+$oa-orange-700: #e6522a;
+$oa-orange-800: #d74c26;
+$oa-orange-900: #bd401f;
+
+$oa-green-500:  #69feb5;
+$oa-green-900:  #43a473;
+
+$oa-purple-500: #673ab7;
+$oa-purple-600: #5e35b1;
+$oa-purple-700: #512da8;
+
+$oa-yellow-700: #ffc533;
+$oa-yellow-900: #f9841c;
+
+// Fonts — served from the DARC CDN (loaded via @import below)
+$font-sans: 'Inter', 'Liberation Sans', 'Arial', sans-serif;
+$font-mono: 'Sligoil Micro', ui-monospace, Menlo, monospace;
+
+// ─── Default (light) scheme tokens ─────────────────────────────────
+$bg:           $oa-paper;
+$panel:        $oa-white;
+$panel-2:      $oa-gray-100;
+$line:         $oa-gray-200;
+$line-strong:  $oa-gray-300;
+$text:         $oa-black;
+$text-dim:     $oa-gray-700;
+$text-mute:    $oa-gray-500;
+$accent:       $oa-orange-500;
+$accent-bg:    rgba(255, 95, 51, 0.10);
+$accent-ink:   $oa-white;
+
+// ─── reveal.js variable overrides ──────────────────────────────────
+@use 'template/settings' with (
+	$background: $bg,
+	$background-color: $bg,
+
+	$main-font: $font-sans,
+	$main-font-size: 36px,
+	$main-color: $text-dim,
+
+	$code-font: $font-mono,
+
+	$heading-margin: 0 0 0.4em 0,
+	$heading-color: $text,
+	$heading-font: $font-mono,
+	$heading-font-weight: 400,
+	$heading-text-transform: none,
+	$heading-letter-spacing: -0.025em,
+	$heading-line-height: 1.05,
+
+	$heading1-size: 3.0em,
+	$heading2-size: 1.9em,
+	$heading3-size: 1.4em,
+	$heading4-size: 1.05em,
+
+	$link-color: $accent,
+	$link-color-hover: $oa-orange-700,
+	$link-color-dark: $oa-orange-800,
+
+	$selection-color: $oa-white,
+	$selection-background-color: $accent,
+
+	$overlay-element-bg-color: '255, 248, 241',
+	$overlay-element-fg-color: '26, 26, 26'
+);
+
+@use 'template/theme';
+
+// ─── DARC fonts (served from the DARC CDN) ─────────────────────────
+@import url('https://cdn.investigativedata.org/style/fonts.min.css');
+
+// ─── DARC tokens exposed as CSS vars ───────────────────────────────
+:root {
+	--oa-black:  #{$oa-black};
+	--oa-white:  #{$oa-white};
+	--oa-paper:  #{$oa-paper};
+
+	--oa-gray-100: #{$oa-gray-100};
+	--oa-gray-200: #{$oa-gray-200};
+	--oa-gray-300: #{$oa-gray-300};
+	--oa-gray-400: #{$oa-gray-400};
+	--oa-gray-500: #{$oa-gray-500};
+	--oa-gray-600: #{$oa-gray-600};
+	--oa-gray-700: #{$oa-gray-700};
+
+	--oa-orange-300: #{$oa-orange-300};
+	--oa-orange-500: #{$oa-orange-500};
+	--oa-orange-700: #{$oa-orange-700};
+	--oa-orange-800: #{$oa-orange-800};
+
+	--oa-green-500:  #{$oa-green-500};
+	--oa-green-900:  #{$oa-green-900};
+
+	--oa-purple-500: #{$oa-purple-500};
+	--oa-purple-700: #{$oa-purple-700};
+
+	--oa-yellow-700: #{$oa-yellow-700};
+	--oa-yellow-900: #{$oa-yellow-900};
+
+	--darc-bg:           #{$bg};
+	--darc-panel:        #{$panel};
+	--darc-panel-2:      #{$panel-2};
+	--darc-line:         #{$line};
+	--darc-line-strong:  #{$line-strong};
+	--darc-text:         #{$text};
+	--darc-text-dim:     #{$text-dim};
+	--darc-text-mute:    #{$text-mute};
+	--darc-accent:       #{$accent};
+	--darc-accent-bg:    #{$accent-bg};
+	--darc-accent-ink:   #{$accent-ink};
+
+	--darc-admonition-info:    #{$oa-purple-700};
+	--darc-admonition-warning: #{$oa-yellow-900};
+	--darc-admonition-danger:  #{$oa-orange-800};
+	--darc-admonition-success: #{$oa-green-900};
+
+	--darc-font-sans: #{$font-sans};
+	--darc-font-mono: #{$font-mono};
+}
+
+// ─── DARC type & component styling ─────────────────────────────────
+.reveal {
+	h1 {
+		letter-spacing: -0.035em;
+		line-height: 0.98;
+	}
+
+	h2, h3, h4, h5, h6 {
+		font-family: var(--darc-font-sans);
+		font-weight: 600;
+		letter-spacing: -0.01em;
+	}
+
+	.eyebrow,
+	.mono-tag {
+		font-family: var(--darc-font-mono);
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		font-size: 0.5em;
+		color: var(--darc-text-mute);
+	}
+
+	strong, b { color: var(--darc-text); font-weight: 600; }
+	em, i { color: var(--darc-text-dim); }
+
+	ul li::marker { color: var(--darc-accent); }
+	ol li::marker { color: var(--darc-accent); }
+
+	code {
+		background: var(--darc-panel-2);
+		border: 1px solid var(--darc-line);
+		color: var(--darc-text);
+		border-radius: 4px;
+		padding: 0.05em 0.35em;
+		font-size: 0.85em;
+	}
+
+	a code {
+		background: var(--darc-accent-bg);
+		border-color: transparent;
+		color: var(--darc-accent);
+	}
+
+	h1, h2, h3, h4 {
+		code {
+			background: transparent;
+			border: 0;
+			color: inherit;
+			padding: 0;
+		}
+	}
+
+	pre {
+		background: var(--darc-panel-2);
+		border: 1px solid var(--darc-line);
+		border-radius: 6px;
+		box-shadow: none;
+
+		code {
+			background: transparent;
+			border: 0;
+			color: var(--darc-text);
+			padding: 0.6em 0.8em;
+			font-size: inherit;
+			border-radius: 0;
+		}
+	}
+
+	blockquote {
+		background: transparent;
+		border-left: 3px solid var(--darc-accent);
+		box-shadow: none;
+		color: var(--darc-text-dim);
+		padding: 0.2em 0 0.2em 1em;
+		width: auto;
+		max-width: 90%;
+		margin-left: 0;
+		font-style: normal;
+	}
+
+	table {
+		background: var(--darc-panel);
+		border: 1px solid var(--darc-line);
+
+		th {
+			background: var(--darc-panel-2);
+			color: var(--darc-text);
+			border-bottom: 1px solid var(--darc-line-strong);
+			font-family: var(--darc-font-mono);
+			font-weight: 400;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			font-size: 0.75em;
+		}
+
+		td {
+			border-bottom: 1px solid var(--darc-line);
+			color: var(--darc-text-dim);
+		}
+	}
+
+	hr {
+		border: 0;
+		border-top: 1px solid var(--darc-line);
+		margin: var(--r-block-margin) auto;
+	}
+
+	::selection { color: var(--darc-accent-ink); background: var(--darc-accent); }
+
+	.progress {
+		background: rgba(26, 26, 26, 0.06);
+		color: var(--darc-accent);
+	}
+
+	.controls { color: var(--darc-accent); }
+
+	.admonition {
+		display: block;
+		text-align: left;
+		background: var(--darc-panel);
+		border: 1px solid var(--darc-line);
+		border-left: 3px solid var(--darc-accent);
+		border-radius: 4px;
+		padding: 0.6em 0.9em;
+		margin: var(--r-block-margin) auto;
+		max-width: 90%;
+		font-size: 0.75em;
+
+		.admonition-title {
+			display: block;
+			font-family: var(--darc-font-mono);
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			font-size: 0.85em;
+			color: var(--darc-accent);
+			margin-bottom: 0.3em;
+		}
+
+		p { margin: 0.3em 0; color: var(--darc-text); }
+
+		&.note, &.info {
+			border-left-color: var(--darc-admonition-info);
+			.admonition-title { color: var(--darc-admonition-info); }
+		}
+		&.warning, &.caution {
+			border-left-color: var(--darc-admonition-warning);
+			.admonition-title { color: var(--darc-admonition-warning); }
+		}
+		&.danger, &.error, &.failure {
+			border-left-color: var(--darc-admonition-danger);
+			.admonition-title { color: var(--darc-admonition-danger); }
+		}
+		&.tip, &.success, &.hint {
+			border-left-color: var(--darc-admonition-success);
+			.admonition-title { color: var(--darc-admonition-success); }
+		}
+	}
+
+	.r-frame {
+		border-color: var(--darc-line-strong);
+	}
+}
+
+// Dark-background slides flip text to DARC paper and use brighter accents
+@include mixins.dark-bg-text-color($oa-white);
+
+section.has-dark-background {
+	a { color: $oa-orange-300; }
+	code {
+		background: rgba(255, 255, 255, 0.06);
+		border-color: rgba(255, 255, 255, 0.12);
+		color: $oa-white;
+	}
+	pre {
+		background: rgba(255, 255, 255, 0.05);
+		border-color: rgba(255, 255, 255, 0.10);
+		code { color: $oa-white; }
+	}
+	blockquote { color: $oa-gray-300; }
+}

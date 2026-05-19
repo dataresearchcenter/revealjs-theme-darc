@@ -1,0 +1,392 @@
+/**
+ * DARC — Dark theme for reveal.js
+ *
+ * Adapted from the DARC zensical / mkdocs-material theme:
+ * https://dataresearchcenter.github.io/zensical-theme-darc/
+ *
+ * Slate variant: orange ember accent on near-black,
+ * Inter (body) + Sligoil Micro (display + code).
+ */
+
+@use 'sass:color';
+@use 'template/mixins' as mixins;
+
+// ─── DARC palette ──────────────────────────────────────────────────
+$oa-black:  #1a1a1a;
+$oa-white:  #ffffff;
+$oa-paper:  #fff8f1;
+
+$oa-gray-50:  #f9f9f9;
+$oa-gray-100: #f2f2f2;
+$oa-gray-200: #e8e8e8;
+$oa-gray-300: #d8d8d8;
+$oa-gray-400: #b4b4b4;
+$oa-gray-500: #949494;
+$oa-gray-600: #6c6c6c;
+$oa-gray-700: #595959;
+$oa-gray-800: #3a3a3a;
+$oa-gray-900: #1a1a1a;
+
+$oa-orange-300: #fe8f6f;
+$oa-orange-400: #fe764f;
+$oa-orange-500: #ff5f33;
+$oa-orange-600: #f4592f;
+$oa-orange-700: #e6522a;
+$oa-orange-800: #d74c26;
+$oa-orange-900: #bd401f;
+
+$oa-green-300:  #9dffd0;
+$oa-green-500:  #69feb5;
+$oa-green-700:  #58d99a;
+$oa-green-900:  #43a473;
+
+$oa-purple-200: #b39ddb;
+$oa-purple-300: #9575cd;
+$oa-purple-500: #673ab7;
+$oa-purple-700: #512da8;
+
+$oa-yellow-300: #fef177;
+$oa-yellow-500: #f9e737;
+$oa-yellow-700: #ffc533;
+$oa-yellow-900: #f9841c;
+
+// Fonts — served from the DARC CDN (loaded via @import below)
+$font-sans: 'Inter', 'Liberation Sans', 'Arial', sans-serif;
+$font-mono: 'Sligoil Micro', ui-monospace, Menlo, monospace;
+
+// ─── Slate scheme tokens ───────────────────────────────────────────
+$bg:           $oa-black;
+$panel:        #1f1f1f;
+$panel-2:      #262626;
+$line:         #2e2e2e;
+$line-strong:  #3a3a3a;
+$text:         $oa-white;
+$text-dim:     $oa-gray-400;
+$text-mute:    $oa-gray-600;
+$accent:       $oa-orange-500;
+$accent-bg:    rgba(255, 95, 51, 0.12);
+$accent-ink:   $oa-black;
+
+// ─── reveal.js variable overrides ──────────────────────────────────
+@use 'template/settings' with (
+	$background: $bg,
+	$background-color: $bg,
+
+	$main-font: $font-sans,
+	$main-font-size: 36px,
+	$main-color: $text-dim,
+
+	$code-font: $font-mono,
+
+	$heading-margin: 0 0 0.4em 0,
+	$heading-color: $text,
+	$heading-font: $font-mono,
+	$heading-font-weight: 400,
+	$heading-text-transform: none,
+	$heading-letter-spacing: -0.025em,
+	$heading-line-height: 1.05,
+
+	$heading1-size: 3.0em,
+	$heading2-size: 1.9em,
+	$heading3-size: 1.4em,
+	$heading4-size: 1.05em,
+
+	$link-color: $accent,
+	$link-color-hover: $oa-orange-300,
+	$link-color-dark: $oa-orange-700,
+
+	$selection-color: $oa-white,
+	$selection-background-color: $accent,
+
+	$overlay-element-bg-color: '26, 26, 26',
+	$overlay-element-fg-color: '255, 255, 255'
+);
+
+@use 'template/theme';
+
+// ─── DARC fonts (served from the DARC CDN) ─────────────────────────
+// fonts.min.css inlines all Inter weights + Sligoil Micro; its
+// relative font URLs resolve against the CDN.
+@import url('https://cdn.investigativedata.org/style/fonts.min.css');
+
+// ─── DARC tokens exposed as CSS vars for slide-level overrides ─────
+:root {
+	--oa-black:  #{$oa-black};
+	--oa-white:  #{$oa-white};
+	--oa-paper:  #{$oa-paper};
+
+	--oa-gray-100: #{$oa-gray-100};
+	--oa-gray-200: #{$oa-gray-200};
+	--oa-gray-300: #{$oa-gray-300};
+	--oa-gray-400: #{$oa-gray-400};
+	--oa-gray-500: #{$oa-gray-500};
+	--oa-gray-600: #{$oa-gray-600};
+	--oa-gray-700: #{$oa-gray-700};
+
+	--oa-orange-300: #{$oa-orange-300};
+	--oa-orange-500: #{$oa-orange-500};
+	--oa-orange-700: #{$oa-orange-700};
+	--oa-orange-800: #{$oa-orange-800};
+
+	--oa-green-500:  #{$oa-green-500};
+	--oa-green-700:  #{$oa-green-700};
+	--oa-green-900:  #{$oa-green-900};
+
+	--oa-purple-200: #{$oa-purple-200};
+	--oa-purple-300: #{$oa-purple-300};
+	--oa-purple-700: #{$oa-purple-700};
+
+	--oa-yellow-300: #{$oa-yellow-300};
+	--oa-yellow-700: #{$oa-yellow-700};
+	--oa-yellow-900: #{$oa-yellow-900};
+
+	--darc-bg:           #{$bg};
+	--darc-panel:        #{$panel};
+	--darc-panel-2:      #{$panel-2};
+	--darc-line:         #{$line};
+	--darc-line-strong:  #{$line-strong};
+	--darc-text:         #{$text};
+	--darc-text-dim:     #{$text-dim};
+	--darc-text-mute:    #{$text-mute};
+	--darc-accent:       #{$accent};
+	--darc-accent-bg:    #{$accent-bg};
+	--darc-accent-ink:   #{$accent-ink};
+
+	--darc-admonition-info:    #{$oa-purple-300};
+	--darc-admonition-warning: #{$oa-yellow-700};
+	--darc-admonition-danger:  #{$oa-orange-500};
+	--darc-admonition-success: #{$oa-green-500};
+
+	--darc-font-sans: #{$font-sans};
+	--darc-font-mono: #{$font-mono};
+}
+
+// ─── DARC type & component styling on top of the reveal template ───
+.reveal {
+	// H1 stays "display": mono, 400, tight tracking
+	h1 {
+		letter-spacing: -0.035em;
+		line-height: 0.98;
+	}
+
+	// H2–H4 fall back to sans for body-style sections
+	h2, h3, h4, h5, h6 {
+		font-family: var(--darc-font-sans);
+		font-weight: 600;
+		letter-spacing: -0.01em;
+	}
+
+	// Eyebrow / mono tag helper (use as <p class="eyebrow">)
+	.eyebrow,
+	.mono-tag {
+		font-family: var(--darc-font-mono);
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		font-size: 0.5em;
+		color: var(--darc-text-mute);
+	}
+
+	// Strong is body text accent
+	strong, b { color: var(--darc-text); font-weight: 600; }
+
+	// Italics in dim text
+	em, i { color: var(--darc-text-dim); }
+
+	// Lists — accent markers
+	ul li::marker { color: var(--darc-accent); }
+	ol li::marker { color: var(--darc-accent); }
+
+	// Inline code — panel chip
+	code {
+		background: var(--darc-panel);
+		border: 1px solid var(--darc-line);
+		color: var(--darc-text);
+		border-radius: 4px;
+		padding: 0.05em 0.35em;
+		font-size: 0.85em;
+	}
+
+	a code {
+		background: var(--darc-accent-bg);
+		border-color: transparent;
+		color: var(--darc-accent);
+	}
+
+	// Headings keep code transparent so it doesn't break the rhythm
+	h1, h2, h3, h4 {
+		code {
+			background: transparent;
+			border: 0;
+			color: inherit;
+			padding: 0;
+		}
+	}
+
+	// Code blocks — DARC panel chrome
+	pre {
+		background: var(--darc-panel);
+		border: 1px solid var(--darc-line);
+		border-radius: 6px;
+		box-shadow: none;
+
+		code {
+			background: transparent;
+			border: 0;
+			color: var(--darc-text);
+			padding: 0.6em 0.8em;
+			font-size: inherit;
+			border-radius: 0;
+		}
+	}
+
+	// Blockquote — accent rule, no italic shadow box
+	blockquote {
+		background: transparent;
+		border-left: 3px solid var(--darc-accent);
+		box-shadow: none;
+		color: var(--darc-text-dim);
+		padding: 0.2em 0 0.2em 1em;
+		width: auto;
+		max-width: 90%;
+		margin-left: 0;
+		font-style: normal;
+	}
+
+	// Tables — panel with hairline borders
+	table {
+		background: var(--darc-panel);
+		border: 1px solid var(--darc-line);
+
+		th {
+			background: var(--darc-panel-2);
+			color: var(--darc-text);
+			border-bottom: 1px solid var(--darc-line-strong);
+			font-family: var(--darc-font-mono);
+			font-weight: 400;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			font-size: 0.75em;
+		}
+
+		td {
+			border-bottom: 1px solid var(--darc-line);
+			color: var(--darc-text-dim);
+		}
+	}
+
+	// Horizontal rule
+	hr {
+		border: 0;
+		border-top: 1px solid var(--darc-line);
+		margin: var(--r-block-margin) auto;
+	}
+
+	// Selection
+	::selection { color: var(--darc-accent-ink); background: var(--darc-accent); }
+
+	// Progress bar — accent
+	.progress {
+		background: rgba(255, 255, 255, 0.04);
+		color: var(--darc-accent);
+	}
+
+	// Controls
+	.controls { color: var(--darc-accent); }
+
+	// Admonitions — mirror the DARC callout style
+	// Use as: <aside class="admonition note|info|warning|danger|success|tip">…</aside>
+	.admonition {
+		display: block;
+		text-align: left;
+		background: var(--darc-panel);
+		border: 1px solid var(--darc-line);
+		border-left: 3px solid var(--darc-accent);
+		border-radius: 4px;
+		padding: 0.6em 0.9em;
+		margin: var(--r-block-margin) auto;
+		max-width: 90%;
+		font-size: 0.75em;
+
+		.admonition-title {
+			display: block;
+			font-family: var(--darc-font-mono);
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			font-size: 0.85em;
+			color: var(--darc-accent);
+			margin-bottom: 0.3em;
+		}
+
+		p { margin: 0.3em 0; color: var(--darc-text); }
+
+		&.note, &.info {
+			border-left-color: var(--darc-admonition-info);
+			.admonition-title { color: var(--darc-admonition-info); }
+		}
+		&.warning, &.caution {
+			border-left-color: var(--darc-admonition-warning);
+			.admonition-title { color: var(--darc-admonition-warning); }
+		}
+		&.danger, &.error, &.failure {
+			border-left-color: var(--darc-admonition-danger);
+			.admonition-title { color: var(--darc-admonition-danger); }
+		}
+		&.tip, &.success, &.hint {
+			border-left-color: var(--darc-admonition-success);
+			.admonition-title { color: var(--darc-admonition-success); }
+		}
+	}
+
+	// Frame helper — DARC line color instead of body color
+	.r-frame {
+		border-color: var(--darc-line-strong);
+	}
+}
+
+// Light-background slides flip text to DARC ink and use darker accents
+@include mixins.light-bg-text-color($oa-black);
+
+section.has-light-background {
+	a { color: $oa-orange-700; }
+	code {
+		background: $oa-gray-100;
+		border-color: $oa-gray-200;
+		color: $oa-black;
+	}
+	pre {
+		background: $oa-gray-50;
+		border-color: $oa-gray-200;
+		code { color: $oa-black; }
+	}
+	blockquote { color: $oa-gray-700; }
+	table {
+		background: $oa-white;
+		border-color: $oa-gray-200;
+		th { background: $oa-gray-100; color: $oa-black; border-bottom-color: $oa-gray-300; }
+		td { color: $oa-gray-700; border-bottom-color: $oa-gray-200; }
+	}
+
+	// Admonitions flip to the DARC default-scheme palette (deep accents on white panel)
+	.admonition {
+		background: $oa-white;
+		border-color: $oa-gray-200;
+		p { color: $oa-black; }
+
+		&.note, &.info {
+			border-left-color: $oa-purple-700;
+			.admonition-title { color: $oa-purple-700; }
+		}
+		&.warning, &.caution {
+			border-left-color: $oa-yellow-900;
+			.admonition-title { color: $oa-yellow-900; }
+		}
+		&.danger, &.error, &.failure {
+			border-left-color: $oa-orange-800;
+			.admonition-title { color: $oa-orange-800; }
+		}
+		&.tip, &.success, &.hint {
+			border-left-color: $oa-green-900;
+			.admonition-title { color: $oa-green-900; }
+		}
+	}
+}
