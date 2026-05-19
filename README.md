@@ -11,37 +11,92 @@ Two variants ship side-by-side:
 
 ## Use with HedgeDoc
 
-HedgeDoc's `slideOptions.theme` only accepts named built-in reveal.js themes, so we side-load DARC via a `<link>` in the slide markdown:
+For a self-hosted HedgeDoc deployment, the cleanest path is to **replace HedgeDoc's stock `public/css/slide.css` with `dist/darc.css`**. That URL is already in HedgeDoc's `style-src` CSP allowlist, applies to every deck automatically, and needs no per-document markup.
 
-```markdown
----
-title: My deck
-type: slide
-slideOptions:
-  theme: black            # any built-in is fine — DARC overrides everything
-  transition: fade
----
+### Docker bind-mount
 
-<link rel="stylesheet" href="https://<your-gh-pages-url>/dist/darc.css">
-
-# Slide one
-
-Body text.
+```yaml
+# docker-compose.yml
+services:
+  hedgedoc:
+    volumes:
+      - ./darc.css:/hedgedoc/public/css/slide.css:ro
 ```
 
-The `<link>` is parsed as raw HTML and applies the DARC overrides on top of whatever HedgeDoc loaded. Drop in `dist/darc-light.css` instead for the light variant.
+Drop your local copy of `dist/darc.css` next to the compose file and restart. Every slide deck now renders with the DARC theme. Swap for `darc-light.css` if you want the paper variant.
+
+To pull a fresh copy from the published Pages build:
+
+```sh
+curl -o darc.css https://dataresearchcenter.github.io/revealjs-theme-darc/dist/darc.css
+```
+
+### Font CSP whitelist
+
+`darc.css` loads Inter + Sligoil Micro from `https://cdn.investigativedata.org`. HedgeDoc's default `font-src` is `'self'` only, so without one extra line in `config.json` the slides render with system fallback fonts:
+
+```json
+{
+  "csp": {
+    "directives": {
+      "fontSrc": ["'self'", "https://cdn.investigativedata.org"]
+    }
+  }
+}
+```
+
+Restart HedgeDoc after editing.
+
+### Admonitions in HedgeDoc
+
+HedgeDoc has native `:::block` syntax that maps straight onto DARC's accent palette:
+
+```markdown
+:::success
+## All green
+Yes :tada:
+:::
+
+:::info
+## Heads up
+Purple accent for notes.
+:::
+
+:::warning
+## Caution
+Yellow accent.
+:::
+
+:::danger
+## Stop
+Orange accent.
+:::
+```
+
+These render as `<div class="alert alert-{variant}">…</div>` and the DARC stylesheet tints them per-variant.
 
 ## Use in a vanilla reveal.js deck
 
 ```html
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@6.0.1/dist/reset.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@6.0.1/dist/reveal.css">
-<link rel="stylesheet" href="https://<your-gh-pages-url>/dist/darc.css">
+<link rel="stylesheet" href="https://dataresearchcenter.github.io/revealjs-theme-darc/dist/darc.css">
 ```
 
 ## Admonitions
 
-The theme styles DARC-flavoured admonition blocks. Markdown doesn't define them, but you can write raw HTML inside slide content:
+Three input syntaxes are styled — pick whichever your editor likes best.
+
+**HedgeDoc native** (recommended in HedgeDoc decks):
+
+```markdown
+:::success
+## Heading
+Body text.
+:::
+```
+
+**mkdocs / zensical HTML** (works in any markdown that allows raw HTML):
 
 ```html
 <aside class="admonition note">
@@ -50,14 +105,23 @@ The theme styles DARC-flavoured admonition blocks. Markdown doesn't define them,
 </aside>
 ```
 
-Variants and their accents:
+**Plain bootstrap-style div**:
 
-| Class | Accent |
-|---|---|
-| `note`, `info` | purple |
-| `warning`, `caution` | yellow |
-| `danger`, `error`, `failure` | orange |
-| `tip`, `success`, `hint` | green |
+```html
+<div class="alert alert-info">
+  <h4>Heading</h4>
+  Body text.
+</div>
+```
+
+Accent per variant:
+
+| HedgeDoc `:::` | mkdocs class | Bootstrap class | Accent |
+|---|---|---|---|
+| `:::info` | `note`, `info` | `alert-info` | purple |
+| `:::warning` | `warning`, `caution` | `alert-warning` | yellow |
+| `:::danger` | `danger`, `error`, `failure` | `alert-danger` | orange |
+| `:::success` | `tip`, `success`, `hint` | `alert-success` | green |
 
 ## Eyebrow / mono-tag
 

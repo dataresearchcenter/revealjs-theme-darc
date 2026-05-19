@@ -267,7 +267,11 @@ $accent-ink:   $oa-white;
 
 	.controls { color: var(--darc-accent); }
 
-	.admonition {
+	// Admonitions — supports mkdocs `<aside class="admonition note">`,
+	// HedgeDoc `:::success` (→ `<div class="alert alert-success">`),
+	// and bare bootstrap `.alert-*` classes.
+	.admonition,
+	.alert {
 		display: block;
 		text-align: left;
 		background: var(--darc-panel);
@@ -289,24 +293,38 @@ $accent-ink:   $oa-white;
 			margin-bottom: 0.3em;
 		}
 
-		p { margin: 0.3em 0; color: var(--darc-text); }
+		h1, h2, h3, h4, h5, h6 {
+			font-family: var(--darc-font-mono);
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			font-size: 0.85em;
+			font-weight: 400;
+			margin: 0 0 0.3em 0;
+			color: var(--darc-accent);
+		}
 
-		&.note, &.info {
-			border-left-color: var(--darc-admonition-info);
-			.admonition-title { color: var(--darc-admonition-info); }
-		}
-		&.warning, &.caution {
-			border-left-color: var(--darc-admonition-warning);
-			.admonition-title { color: var(--darc-admonition-warning); }
-		}
-		&.danger, &.error, &.failure {
-			border-left-color: var(--darc-admonition-danger);
-			.admonition-title { color: var(--darc-admonition-danger); }
-		}
-		&.tip, &.success, &.hint {
-			border-left-color: var(--darc-admonition-success);
-			.admonition-title { color: var(--darc-admonition-success); }
-		}
+		p, li { margin: 0.3em 0; color: var(--darc-text); font-size: inherit; }
+	}
+
+	.admonition.note, .admonition.info,
+	.alert.alert-info {
+		border-left-color: var(--darc-admonition-info);
+		.admonition-title, h1, h2, h3, h4, h5, h6 { color: var(--darc-admonition-info); }
+	}
+	.admonition.warning, .admonition.caution,
+	.alert.alert-warning {
+		border-left-color: var(--darc-admonition-warning);
+		.admonition-title, h1, h2, h3, h4, h5, h6 { color: var(--darc-admonition-warning); }
+	}
+	.admonition.danger, .admonition.error, .admonition.failure,
+	.alert.alert-danger {
+		border-left-color: var(--darc-admonition-danger);
+		.admonition-title, h1, h2, h3, h4, h5, h6 { color: var(--darc-admonition-danger); }
+	}
+	.admonition.tip, .admonition.success, .admonition.hint,
+	.alert.alert-success {
+		border-left-color: var(--darc-admonition-success);
+		.admonition-title, h1, h2, h3, h4, h5, h6 { color: var(--darc-admonition-success); }
 	}
 
 	.r-frame {

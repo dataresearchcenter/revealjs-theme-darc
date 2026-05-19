@@ -81,7 +81,7 @@ async function loadDeck(url) {
 		</section>
 
 		<section>
-			<h2>Admonitions</h2>
+			<h2>Admonitions (mkdocs syntax)</h2>
 			<aside class="admonition note">
 				<span class="admonition-title">Note</span>
 				<p>Mirror of the DARC mkdocs callout — info purple, warning yellow, danger orange, success green.</p>
@@ -98,6 +98,26 @@ async function loadDeck(url) {
 				<span class="admonition-title">Tip</span>
 				<p>Use <code>--dry-run</code> first.</p>
 			</aside>
+		</section>
+
+		<section>
+			<h2>Admonitions (HedgeDoc <code>:::</code> syntax)</h2>
+			<div class="alert alert-info">
+				<h4>Info</h4>
+				<p><code>:::info</code> renders as <code>&lt;div class="alert alert-info"&gt;</code> — same purple accent.</p>
+			</div>
+			<div class="alert alert-warning">
+				<h4>Warning</h4>
+				<p><code>:::warning</code> — yellow.</p>
+			</div>
+			<div class="alert alert-danger">
+				<h4>Danger</h4>
+				<p><code>:::danger</code> — orange.</p>
+			</div>
+			<div class="alert alert-success">
+				<h4>Success</h4>
+				<p><code>:::success</code> — green.</p>
+			</div>
 		</section>
 
 		<section data-background-color="#fff8f1">
