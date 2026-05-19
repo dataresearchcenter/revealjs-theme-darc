@@ -1,0 +1,207 @@
+/**
+ * DARC — HedgeDoc app overlay
+ *
+ * Palette + typography retint for HedgeDoc's app UI (cover, editor,
+ * preview, history). Layout and structure stay HedgeDoc-native.
+ *
+ * Sister stylesheet to `darc.css` (slide mode). Bind-mount via Docker:
+ *
+ *   volumes:
+ *     - ./darc-hedgedoc.css:/hedgedoc/public/css/site.css:ro
+ *
+ * `site.css` is loaded on every HedgeDoc page (cover, editor, view) so
+ * one mount catches everything. The original `site.css` content (font +
+ * focus/scrolling tweaks) is reproduced below so nothing regresses.
+ *
+ * CSP: requires `style-src` and `font-src` whitelisting for
+ *      cdn.investigativedata.org — see README.
+ */
+
+// ─── DARC palette ──────────────────────────────────────────────────
+$oa-black:    #1a1a1a;
+$oa-white:    #ffffff;
+$oa-paper:    #fff8f1;
+$oa-gray-100: #f2f2f2;
+$oa-gray-200: #e8e8e8;
+$oa-gray-300: #d8d8d8;
+$oa-gray-400: #b4b4b4;
+$oa-gray-500: #949494;
+$oa-gray-600: #6c6c6c;
+$oa-gray-700: #595959;
+$oa-orange-300: #fe8f6f;
+$oa-orange-400: #fe764f;
+$oa-orange-500: #ff5f33;
+$oa-orange-700: #e6522a;
+$oa-orange-800: #d74c26;
+
+$font-sans: 'Inter', 'Liberation Sans', 'Arial', sans-serif;
+$font-mono: 'Sligoil Micro', ui-monospace, Menlo, monospace;
+
+// ─── DARC fonts ────────────────────────────────────────────────────
+@import url('https://cdn.investigativedata.org/style/fonts.min.css');
+
+// ─── Tokens exposed on :root ───────────────────────────────────────
+:root {
+	--darc-accent:        #{$oa-orange-500};
+	--darc-accent-hover:  #{$oa-orange-300};
+	--darc-accent-dark:   #{$oa-orange-700};
+	--darc-accent-bg:     rgba(255, 95, 51, 0.10);
+	--darc-font-sans:     #{$font-sans};
+	--darc-font-mono:     #{$font-mono};
+}
+
+// ─── Carry over HedgeDoc's original /css/site.css rules ───────────
+// (kept so bind-mounting this file doesn't regress focus/scroll behaviour)
+body {
+	font-smoothing: subpixel-antialiased !important;
+	-webkit-font-smoothing: subpixel-antialiased !important;
+	-moz-osx-font-smoothing: auto !important;
+	text-shadow: 0 0 1em transparent, 1px 1px 1.2px rgba(0, 0, 0, 0.004);
+	-webkit-overflow-scrolling: touch;
+	letter-spacing: 0.025em;
+
+	// DARC font replaces "Source Sans Pro"
+	font-family: var(--darc-font-sans);
+}
+:focus, .focus { outline: none !important; }
+::-moz-focus-inner { border: 0 !important; }
+
+// ─── Typography ─────────────────────────────────────────────────────
+code, pre, kbd, samp, tt, .CodeMirror, .CodeMirror pre, .navbar-brand {
+	font-family: var(--darc-font-mono);
+}
+
+// Display headings in Sligoil Micro — matches slide theme
+h1,
+.cover-heading,
+.markdown-body h1 {
+	font-family: var(--darc-font-mono);
+	font-weight: 400;
+	letter-spacing: -0.025em;
+}
+
+// h2–h6 stay sans but pick up DARC weight + tracking
+h2, h3, h4, h5, h6,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+	font-family: var(--darc-font-sans);
+	font-weight: 600;
+	letter-spacing: -0.01em;
+}
+
+// ─── Links — DARC ember accent ─────────────────────────────────────
+a, a:focus, a:visited,
+.markdown-body a {
+	color: var(--darc-accent);
+}
+a:hover,
+.markdown-body a:hover {
+	color: var(--darc-accent-hover);
+}
+
+// ─── Bootstrap primary buttons ──────────────────────────────────────
+.btn-primary {
+	background-color: var(--darc-accent);
+	border-color: var(--darc-accent-dark);
+	color: $oa-white;
+}
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active,
+.open > .dropdown-toggle.btn-primary {
+	background-color: var(--darc-accent-dark);
+	border-color: var(--darc-accent-dark);
+	color: $oa-white;
+}
+
+// Link-styled buttons in the navbar / toolbar
+.btn-link {
+	color: var(--darc-accent);
+}
+.btn-link:hover, .btn-link:focus {
+	color: var(--darc-accent-hover);
+}
+
+// ─── Form controls ──────────────────────────────────────────────────
+.form-control:focus {
+	border-color: var(--darc-accent);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
+	            0 0 6px rgba(255, 95, 51, 0.4);
+}
+
+// ─── Nav pills / tabs ───────────────────────────────────────────────
+.nav-pills > li.active > a,
+.nav-pills > li.active > a:focus,
+.nav-pills > li.active > a:hover {
+	background-color: var(--darc-accent);
+	color: $oa-white;
+}
+
+// ─── Navbar brand — DARC mono tracking ─────────────────────────────
+.navbar-brand {
+	letter-spacing: 0.05em;
+}
+
+// Eyebrow / section labels (cover page + landing)
+.section-title {
+	font-family: var(--darc-font-mono);
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+// ─── Inline code & code blocks ─────────────────────────────────────
+// Markdown preview: ember-tinted chip for inline code
+.markdown-body :not(pre) > code,
+.ui-content :not(pre) > code {
+	background: var(--darc-accent-bg);
+	color: var(--darc-accent-dark);
+	border: 1px solid rgba(255, 95, 51, 0.20);
+	border-radius: 3px;
+	padding: 0.05em 0.35em;
+}
+
+// Block code keeps HedgeDoc's panel chrome but uses Sligoil
+.markdown-body pre,
+.ui-content pre {
+	font-family: var(--darc-font-mono);
+}
+
+// ─── Selection ──────────────────────────────────────────────────────
+::selection {
+	background: var(--darc-accent);
+	color: $oa-white;
+}
+::-moz-selection {
+	background: var(--darc-accent);
+	color: $oa-white;
+}
+
+// ─── Admonition / alert blocks (rendered preview) ──────────────────
+// HedgeDoc's :::block syntax outputs <div class="alert alert-*">.
+// Mirror the slide-mode accents here so callouts feel consistent.
+.alert {
+	border-left: 3px solid var(--darc-accent);
+
+	&.alert-info     { border-left-color: $oa-orange-500;
+	                   .alert-title { color: $oa-orange-500; } }
+	&.alert-warning  { border-left-color: $oa-orange-700; }
+	&.alert-danger   { border-left-color: $oa-orange-800; }
+	&.alert-success  { border-left-color: $oa-orange-300; }
+}
+
+// ─── Active toolbar / sidebar accents ──────────────────────────────
+.ui-toc-dropdown .nav > .active > a,
+.ui-toc-dropdown .nav > .active:focus > a,
+.ui-toc-dropdown .nav > .active:hover > a {
+	border-left-color: var(--darc-accent);
+	color: var(--darc-accent);
+}
+
+// History list — accent the hover state
+.history-list-item:hover .ui-history-content {
+	color: var(--darc-accent);
+}

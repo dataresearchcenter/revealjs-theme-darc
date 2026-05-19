@@ -21,8 +21,9 @@ if [ ! -d reveal.js ]; then
 fi
 
 # Stage our SCSS into reveal.js/css/theme/ (idempotent — copy source-of-truth)
-cp src/darc.scss       reveal.js/css/theme/darc.scss
-cp src/darc-light.scss reveal.js/css/theme/darc-light.scss
+cp src/darc.scss          reveal.js/css/theme/darc.scss
+cp src/darc-light.scss    reveal.js/css/theme/darc-light.scss
+cp src/darc-hedgedoc.scss reveal.js/css/theme/darc-hedgedoc.scss
 
 # Install deps once
 if [ ! -d reveal.js/node_modules ]; then
@@ -34,8 +35,9 @@ fi
 
 # Copy compiled CSS to top-level dist/
 mkdir -p dist
-cp reveal.js/dist/theme/darc.css       dist/darc.css
-cp reveal.js/dist/theme/darc-light.css dist/darc-light.css
+cp reveal.js/dist/theme/darc.css          dist/darc.css
+cp reveal.js/dist/theme/darc-light.css    dist/darc-light.css
+cp reveal.js/dist/theme/darc-hedgedoc.css dist/darc-hedgedoc.css
 
 echo
 echo "Built:"

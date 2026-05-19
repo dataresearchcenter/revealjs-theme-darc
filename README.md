@@ -1,55 +1,77 @@
-# revealjs-darc-theme
+# revealjs-theme-darc
 
-A reveal.js port of the [DARC zensical / mkdocs-material theme](https://dataresearchcenter.github.io/zensical-theme-darc/) — orange ember accent on slate, Inter for body, Sligoil Micro for display + code.
+DARC theme for **HedgeDoc** and **reveal.js** — orange ember accent on slate, Inter for body, Sligoil Micro for display + code. Adapted from the [DARC zensical / mkdocs-material theme](https://dataresearchcenter.github.io/zensical-theme-darc/).
 
-Two variants ship side-by-side:
+Three stylesheets ship side-by-side:
 
-| File | Background | Use for |
+| File | Target | Use for |
 |---|---|---|
-| `dist/darc.css` | near-black (slate) | default — recommended for slide decks |
-| `dist/darc-light.css` | DARC paper | light-room presentations / handouts |
+| `dist/darc.css` | reveal.js — slate (dark) | default deck theme |
+| `dist/darc-light.css` | reveal.js — paper (light) | light-room presentations / handouts |
+| `dist/darc-hedgedoc.css` | HedgeDoc app UI | retint editor, preview, cover, nav |
+
+All three are published at `https://dataresearchcenter.github.io/revealjs-theme-darc/dist/` on every push to `main`.
 
 ## Use with HedgeDoc
 
-For a self-hosted HedgeDoc deployment, the cleanest path is to **replace HedgeDoc's stock `public/css/slide.css` with `dist/darc.css`**. That URL is already in HedgeDoc's `style-src` CSP allowlist, applies to every deck automatically, and needs no per-document markup.
+For a self-hosted HedgeDoc deployment, bind-mount the relevant DARC stylesheet over HedgeDoc's stock CSS file. Both paths live under `/css/` which is already in HedgeDoc's `style-src` CSP allowlist.
 
-### Docker bind-mount
+### docker-compose.yml
 
 ```yaml
-# docker-compose.yml
 services:
   hedgedoc:
     volumes:
+      # slide mode — replaces reveal.js theme
       - ./darc.css:/hedgedoc/public/css/slide.css:ro
+      # app UI — replaces the tiny site-wide stylesheet (font, focus, scroll)
+      - ./darc-hedgedoc.css:/hedgedoc/public/css/site.css:ro
 ```
 
-Drop your local copy of `dist/darc.css` next to the compose file and restart. Every slide deck now renders with the DARC theme. Swap for `darc-light.css` if you want the paper variant.
-
-To pull a fresh copy from the published Pages build:
+Drop your local copies next to the compose file and restart. Pull fresh copies from the published Pages build with:
 
 ```sh
-curl -o darc.css https://dataresearchcenter.github.io/revealjs-theme-darc/dist/darc.css
+curl -o darc.css          https://dataresearchcenter.github.io/revealjs-theme-darc/dist/darc.css
+curl -o darc-hedgedoc.css https://dataresearchcenter.github.io/revealjs-theme-darc/dist/darc-hedgedoc.css
 ```
 
-### Font CSP whitelist
+Swap `darc.css` for `darc-light.css` if you want the paper slide variant.
 
-`darc.css` loads Inter + Sligoil Micro from `https://cdn.investigativedata.org`. HedgeDoc's default `font-src` is `'self'` only, so without one extra line in `config.json` the slides render with system fallback fonts:
+### CSP whitelist
+
+All three stylesheets `@import` fonts from `https://cdn.investigativedata.org`. HedgeDoc's defaults block both the stylesheet and the woff2 files, so add the CDN to two CSP directives in `config.json`:
 
 ```json
 {
   "csp": {
     "directives": {
-      "fontSrc": ["'self'", "https://cdn.investigativedata.org"]
+      "styleSrc": ["'self'", "'unsafe-inline'", "https://cdn.investigativedata.org"],
+      "fontSrc":  ["'self'", "https://cdn.investigativedata.org"]
     }
   }
 }
 ```
 
-Restart HedgeDoc after editing.
+`styleSrc` lets `fonts.min.css` resolve through `@import`; `fontSrc` lets the woff2 files inside it load. Restart HedgeDoc after editing.
 
-### Admonitions in HedgeDoc
+### What `darc-hedgedoc.css` actually retints
 
-HedgeDoc has native `:::block` syntax that maps straight onto DARC's accent palette:
+Palette-only overlay, not a structural redesign — HedgeDoc's Bootstrap-flavoured layout stays intact, but the following get DARC treatment:
+
+- body font → Inter; `code` / `.CodeMirror` / `.navbar-brand` → Sligoil Micro
+- `h1` (cover heading, markdown preview) → Sligoil Micro 400, tight tracking
+- `h2`–`h6` → Inter 600, slight negative tracking
+- links → orange ember; primary buttons + form focus rings → orange ember
+- inline `code` chips → ember-tinted panel
+- nav-pills active state, TOC active link, history hover → orange ember
+- text selection → orange ember
+- `:::block` admonition variants tinted (see below)
+
+It does **not** restyle CodeMirror's syntax highlighting, the night-mode toggle, or HedgeDoc's structural chrome — that would be a full theme port.
+
+### Admonitions
+
+HedgeDoc's native `:::block` syntax renders as `<div class="alert alert-{variant}">…</div>` and picks up DARC's accent palette automatically:
 
 ```markdown
 :::success
@@ -73,7 +95,14 @@ Orange accent.
 :::
 ```
 
-These render as `<div class="alert alert-{variant}">…</div>` and the DARC stylesheet tints them per-variant.
+The slide-mode stylesheet (`darc.css`) also accepts mkdocs `<aside class="admonition note">…</aside>` and bare bootstrap `<div class="alert alert-info">…</div>` for the same effect.
+
+| HedgeDoc `:::` | mkdocs class | Bootstrap class | Accent |
+|---|---|---|---|
+| `:::info` | `note`, `info` | `alert-info` | purple |
+| `:::warning` | `warning`, `caution` | `alert-warning` | yellow |
+| `:::danger` | `danger`, `error`, `failure` | `alert-danger` | orange |
+| `:::success` | `tip`, `success`, `hint` | `alert-success` | green |
 
 ## Use in a vanilla reveal.js deck
 
@@ -83,49 +112,11 @@ These render as `<div class="alert alert-{variant}">…</div>` and the DARC styl
 <link rel="stylesheet" href="https://dataresearchcenter.github.io/revealjs-theme-darc/dist/darc.css">
 ```
 
-## Admonitions
-
-Three input syntaxes are styled — pick whichever your editor likes best.
-
-**HedgeDoc native** (recommended in HedgeDoc decks):
-
-```markdown
-:::success
-## Heading
-Body text.
-:::
-```
-
-**mkdocs / zensical HTML** (works in any markdown that allows raw HTML):
-
-```html
-<aside class="admonition note">
-  <span class="admonition-title">Note</span>
-  <p>Mirror of the DARC mkdocs callout.</p>
-</aside>
-```
-
-**Plain bootstrap-style div**:
-
-```html
-<div class="alert alert-info">
-  <h4>Heading</h4>
-  Body text.
-</div>
-```
-
-Accent per variant:
-
-| HedgeDoc `:::` | mkdocs class | Bootstrap class | Accent |
-|---|---|---|---|
-| `:::info` | `note`, `info` | `alert-info` | purple |
-| `:::warning` | `warning`, `caution` | `alert-warning` | yellow |
-| `:::danger` | `danger`, `error`, `failure` | `alert-danger` | orange |
-| `:::success` | `tip`, `success`, `hint` | `alert-success` | green |
+Replace the last `<link>` with `dist/darc-light.css` for the paper variant.
 
 ## Eyebrow / mono-tag
 
-For DARC-style eyebrow labels above a heading:
+For DARC-style eyebrow labels above a heading (slide mode):
 
 ```html
 <p class="eyebrow">section label</p>
@@ -140,7 +131,7 @@ For DARC-style eyebrow labels above a heading:
 
 The script will:
 1. Clone reveal.js at the pinned tag (`6.0.1`) into `reveal.js/` if not present.
-2. Copy `src/darc.scss` and `src/darc-light.scss` into `reveal.js/css/theme/`.
+2. Copy `src/darc.scss`, `src/darc-light.scss`, and `src/darc-hedgedoc.scss` into `reveal.js/css/theme/`.
 3. Run `npm run build:styles` inside the reveal.js checkout.
 4. Stage compiled CSS into top-level `dist/`.
 
@@ -150,8 +141,9 @@ To bump reveal.js: `REVEAL_TAG=6.x.y ./build.sh` (or edit the default in `build.
 
 ```
 src/                    DARC theme SCSS — source of truth
-  darc.scss             slate (dark) variant
-  darc-light.scss       paper (light) variant
+  darc.scss             reveal.js — slate (dark) variant
+  darc-light.scss       reveal.js — paper (light) variant
+  darc-hedgedoc.scss    HedgeDoc — app UI palette overlay
 dist/                   compiled CSS, served via GitHub Pages
 index.html              demo deck (also published)
 build.sh                build script (clones reveal.js, runs vite)
